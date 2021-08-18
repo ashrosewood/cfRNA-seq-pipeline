@@ -41,11 +41,17 @@ if (assembly == "hg38.90") {
     geneID2GO <- get(load("/home/groups/CEDAR/anno/biomaRt/hg38.Ens_90.biomaRt.GO.geneID2GO.RData"))
     xx <- get(load("/home/groups/CEDAR/anno/biomaRt/GO.db.Term.list.rda"))
 }
+if (assembly == "hg38.94") {
+    organismStr <- "hsapiens"
+    ### to get to hg38 mappings ensembl 90!
+    geneID2GO <- get(load("/home/groups/CEDAR/anno/biomaRt/hg38.Ens_94.biomaRt.GO.geneID2GO.RData"))
+    xx <- get(load("/home/groups/CEDAR/anno/biomaRt/GO.db.Term.list.rda"))
+}
 if (assembly == "mm10") {
     organismStr <- "mmusculus"
     ### to get to hg38 mappings ensembl 90!
-    geneID2GO <- get(load("./anno/biomaRt/hg38.Ens_90.biomaRt.GO.external.geneID2GO.RData"))
-    xx <- get(load("./anno/biomaRt/GO.db.Term.list.rda"))
+    geneID2GO <- get(load("/home/groups/CEDAR/anno/biomaRt/mm10.Ens_96.biomaRt.GO.external.geneID2GO.RData"))
+    xx <- get(load("/home/groups/CEDAR/anno/biomaRt/GO.db.Term.list.rda"))
 }
 
 
@@ -139,18 +145,16 @@ if(!(file.exists(Dir))) {
 }
 
 if (up.setsize >=2) {
-
-print("make GO table for the up genes")
+    print("make GO table for the up genes")
 #################################
-go.UP.BP <- runGO(geneList=up.geneList,xx=xx,otype="BP",setName=paste(basename(comparison),"upFC",FC, "adjp", adjp, sep="."))
-#go.UP.MF <- runGO(geneList=up.geneList,xx=xx,otype="MF",setName=paste(comparison,"up",sep="."))
-
-print("make the png for the up genes")
-drawBarplot(go=go.UP.BP,ontology="BP",setName=paste(basename(comparison),"upFC",FC, "adjp", adjp, sep="."))
-
+    go.UP.BP <- runGO(geneList=up.geneList,xx=xx,otype="BP",setName=paste(basename(comparison),"upFC",FC, "adjp", adjp, sep="."))
+    ##go.UP.MF <- runGO(geneList=up.geneList,xx=xx,otype="MF",setName=paste(comparison,"up",sep="."))
+    print("make the png for the up genes")
+    drawBarplot(go=go.UP.BP,ontology="BP",setName=paste(basename(comparison),"upFC",FC, "adjp", adjp, sep="."))
 } else {
-up_out = snakemake@output[[1]]
-write.table('No Significant Genes', file=up_out)
+    print("no sig up genes")
+    up_out = snakemake@output[[2]]
+    write.table('No Significant Genes', file=up_out)
 }
     
 print("get down genes and make geneList")
@@ -166,14 +170,16 @@ dn.setsize
 
 if(dn.setsize >= 2){
 
-print("make GO table for down genes")
-go.DN.BP <- runGO(geneList=dn.geneList,xx=xx,otype="BP",setName=paste(basename(comparison),"downFC",FC, "adjp", adjp, sep="."))
+    print("make GO table for down genes")
+    go.DN.BP <- runGO(geneList=dn.geneList,xx=xx,otype="BP",setName=paste(basename(comparison),"downFC",FC, "adjp", adjp, sep="."))
 
-print("make barplot for down genes")
-drawBarplot(go=go.DN.BP,ontology="BP",setName=paste(basename(comparison),"downFC",FC, "adjp", adjp, sep="."))
+    print("make barplot for down genes")
+    drawBarplot(go=go.DN.BP,ontology="BP",setName=paste(basename(comparison),"downFC",FC, "adjp", adjp, sep="."))
 
 }else{
-down_out = snakemake@output[[2]]
-write.table('No Significant Genes', file=down_out)
+    print("no sig down genes")
+    down_out = snakemake@output[[1]]
+    print(down_out)
+    write.table('No Significant Genes', file=down_out)
 }
 
