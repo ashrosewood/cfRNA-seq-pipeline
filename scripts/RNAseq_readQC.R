@@ -261,13 +261,16 @@ geneTable$Frac <- geneTable$N / sampleTable[m, ]$N
 m                  <- match(geneTable$variable, md$SampleID)
 geneTable$contrast <- md[, contrast][m]
 
+# keep same order as other plots
+levels(geneTable$variable) <- levels(sumCounts.df$SampleID)
+
 # Plot biotype bar
 pdf(paste(outDir, "biotypes.pdf", sep = "/"))
 biotype.plot <- ggplot(geneTable, aes(x=variable, y=Frac, fill=biotype)) +
   geom_bar(stat="identity") +
   ylab("Fraction of each biotype") +
   xlab("Sample") +
-  scale_fill_brewer( palette = "YlGnBu" ) +
+    scale_fill_brewer( palette = "YlGnBu" ) +
   theme(axis.text.x=element_text(angle = 90, size = 5),
         axis.text.y=element_text(size=5),
         axis.title.y=element_text(size=8),
@@ -283,13 +286,14 @@ dev.off()
 
 ### Plot gene attributes
 rDist.dt          <- data.table(rDist, keep.rownames = "sampleID")
-rDist.dt$sampleID <- factor(rDist.dt$sampleID, levels = rDist.dt$sampleID)
+rDist.dt$sampleID <- factor(rDist.dt$sampleID, levels = levels(sumCounts.df$SampleID))
 
 # Melt for plotting
 rDist.melted <- melt(rDist.dt)
 # relevel by exon
 rDist.melted$variable <- relevel(rDist.melted$variable, ref = "Intergenic")
 #rDist.melted$sampleID <- factor(rDist.melted$sampleID, levels = rDist.melted$sampleID)
+
 
 pdf(paste(outDir, "mappings.pdf", sep = "/"))
 mappings.plot <- ggplot(

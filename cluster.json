@@ -122,6 +122,14 @@
         "c" : 1,
         "mem":5000
     },
+    "readQC" :
+    {
+        "J" : "readQC",
+        "e" : "logs/readQC/readQC_%j.err",
+        "o" : "logs/readQC/readQC_%j.out",
+        "c" : 1,
+        "mem" : 1000
+    },
     "insertion_profile" :
     { 
         "J" : "insertion_profile",
