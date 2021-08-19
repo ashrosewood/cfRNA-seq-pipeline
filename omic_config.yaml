@@ -1,24 +1,26 @@
 ##############################################################################
 # Genome and project-specific files that will change from project-to-project
 ##############################################################################
-
 # GTF file for the genome build you would like to use
 gtf_file:
-  /home/exacloud/lustre1/CEDAR/anurpa/genomes/gencode.v27.annotation.gtf
+  /home/groups/CEDAR/anurpa/genomes/gencode.v27.annotation.gtf
 # Bed file for rseqc function read_distribution
 bed_file:
   /home/exacloud/lustre1/CEDAR/roskamsh/projects/Omics-QC-pipeline/data/gencode_v27.bed
 # Pre-built star indexes for hg38
 star_index:
-  /home/exacloud/lustre1/CEDAR/anurpa/genomes/
+  /home/groups/CEDAR/roskamsh/tools/cfRNA_star_index
 exon_gtf:
-  /home/exacloud/lustre1/CEDAR/anurpa/genomes/gencode.housekeeping_genes.exon.gtf
+  /home/groups/CEDAR/anurpa/genomes/gencode.housekeeping_genes.exon.gtf
 TE_gtf:
   /home/groups/CEDAR/anno/gtf/hg38_rmsk_TE.gtf
 genome:
-  /home/exacloud/lustre1/CEDAR/anurpa/genomes/GRCh38.primary_assembly.genome.fa
+  /home/groups/CEDAR/anurpa/genomes/GRCh38.primary_assembly.genome.fa
 ens2geneID:
   /home/groups/CEDAR/roskamsh/projects/cfRNA-seq-pipeline/data/biomart_ensembl_geneid.txt
+filter_anno:
+  /home/groups/CEDAR/anno/biomaRt/hg38.Ens_94.biomaRt.geneAnno.Rdata
+
 
 ####################################################################
 # Tool-specific files that will not change from project-to-project
@@ -43,8 +45,7 @@ bamstats_tool:
 
 # Metadata needed for differential expression analysis
 omic_meta_data:
-  /home/groups/CEDAR/roskamsh/projects/cfRNA-seq-pipeline/data/PP_metadata_keep_FINAL_updated.txt
-#  /home/groups/CEDAR/roskamsh/projects/cfRNA-seq-pipeline/data/PP_metadata_final.txt
+  data/PP_metadata_keep_FINAL_updated.txt 
 
 #############################################################################################
 # Project-specific specifications you will need to make prior to submission of the pipeline
@@ -53,12 +54,12 @@ omic_meta_data:
 project_id:
   PP_cohort_Run3
 assembly:
-  hg38.90
+  hg38.94
 TE_baseline:
   HD
 # option to print GO term tree (0/1)
 printTree:
-  1
+  0
 # fold change cutoff (not log2 transformed) for GO analysis and volcano pot
 FC:
   2
@@ -71,7 +72,7 @@ linear_model:
 seq_layout:
   PE
 sample_id:
-  PP_ID
+  SampleID
 meta_columns_to_plot:
   Status: Status
   Lib_Conc: Lib_Conc

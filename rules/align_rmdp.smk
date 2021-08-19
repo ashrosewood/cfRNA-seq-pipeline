@@ -200,3 +200,19 @@ rule compile_exon_counts:
     script:
         "../scripts/compile_exon_counts.R"
 
+rule readQC:
+    input:
+        countsFile = "data/{project_id}_counts.txt".format(project_id=config["project_id"]),
+        readDistFile = "results/tables/read_coverage.txt"
+    output:
+        readSummaryPlot = "results/readQC_plots/readSummary.pdf",
+        mappingPlot = "results/readQC_plots/mappings.pdf",
+        biotypePlot = "results/readQC_plots/biotypes.pdf"
+    params:
+        annoFile = config['filter_anno'],
+        metaFile = config['omic_meta_data'],
+        contrast = config['linear_model']
+    conda:
+        "../envs/readQC.yaml"
+    shell:
+        """Rscript scripts/RNAseq_readQC.R --countsFile={input.countsFile} --readDistFile={input.readDistFile} --annoFile={params.annoFile} --metaFile={params.metaFile} --contrast={params.contrast} --outdir=results/readQC_plots"""

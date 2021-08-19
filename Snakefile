@@ -14,10 +14,11 @@ timestamp = ('{:%Y-%m-%d_%H:%M:%S}'.format(datetime.datetime.now()))
 
 configfile:"omic_config.yaml"
 project_id = config["project_id"]
+plotNames = ['biotypes', 'mappings', 'readSummary']
 
 SAMPLES, = glob_wildcards("samples/raw/{sample}_R1.fq")
 
-md = pd.read_table(config["omic_meta_data"], index_col="PP_ID",dtype=str)
+md = pd.read_table(config["omic_meta_data"], index_col="SampleID",dtype=str)
 condition = config["linear_model"]
 baseline = config["TE_baseline"]
 
@@ -109,7 +110,9 @@ rule all:
         expand("results/diffexp/pairwise/{contrast}.diffexp.{adjp}.VolcanoPlot.pdf", contrast = config["diffexp"]["contrasts"], adjp = config['adjp']),
         expand("results/diffexp/pairwise/permutationTest/Histogram.{contrast}.Permutation.Test.pdf", contrast = config["diffexp"]["contrasts"]),
         expand(["results/diffexp/glimma-plots/{contrast}.ma_plot.html", "results/diffexp/glimma-plots/{contrast}.volcano_plot.html"],contrast = config["diffexp"]["contrasts"]),
-        "results/diffexp/glimma-plots/{project_id}.mds_plot.html".format(project_id=project_id)
+        "results/diffexp/glimma-plots/{project_id}.mds_plot.html".format(project_id=project_id),
+        expand("results/readQC_plots/{plot}.pdf", plot = plotNames),
+	
 
 include: "rules/align_rmdp.smk"
 include: "rules/omic_qc.smk"
