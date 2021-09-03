@@ -26,9 +26,12 @@ baseline = config["TE_baseline"]
 control = md[md[condition]==baseline]
 treat = md.loc[~md.index.isin(control.index)] 
 
-control_paths = ['samples/star_TE/{}/Aligned.out.bam'.format(x) for x in control.index]
+control_paths = ['samples/star_TE/{}/Aligned.sortedByCoord.out.bam'.format(x) for x in control.index]
+treat['cond_paths'] = ['samples/star_TE/{}/Aligned.sortedByCoord.out.bam'.format(x) for x in treat.index]
 
-treat['cond_paths'] = ['samples/star_TE/{}/Aligned.out.bam'.format(x) for x in treat.index]
+#control_paths = ['samples/star_TE/{}/Aligned.out.bam'.format(x) for x in control.index]
+#treat['cond_paths'] = ['samples/star_TE/{}/Aligned.out.bam'.format(x) for x in treat.index]
+
 cond_paths = {key:x['cond_paths'].values.tolist() for key,x in treat.groupby(condition)}
 CONDITIONS = cond_paths.keys()
 
@@ -99,7 +102,7 @@ rule all:
         expand("rseqc/read_distribution/{sample}/{sample}.read_distribution.{ext}", sample = SAMPLES, ext = read_dist_ext),
         expand("rseqc/read_GC/{sample}/{sample}.GC{ext}", sample = SAMPLES, ext = read_gc_ext),
         "results/tables/read_coverage.txt",
-        expand("samples/star_TE/{sample}/Aligned.out.bam", sample = SAMPLES),
+        expand("samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam", sample = SAMPLES),
         expand("results/TEtranscripts/{condition}.cntTable", condition = CONDITIONS),
         expand("results/diffexp/pairwise/{contrast}.pca_plot.pdf", contrast = config["diffexp"]["contrasts"]),
         "results/diffexp/group/LRT_pca.pdf",

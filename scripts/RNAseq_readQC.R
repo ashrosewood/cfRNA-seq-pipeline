@@ -63,6 +63,17 @@ io <- list(
 )
 io
 
+# Debugging
+#io <- list(
+#  annoFile = "/home/groups/CEDAR/anno/biomaRt/hg38.Ens_94.biomaRt.geneAnno.Rdata",
+#  metaFile = "data/PP_metadata_keep_FINAL_updated.txt",
+#  countsFile = "data/PP_cohort_Run3_counts.txt",
+#  readDistFile = "results/tables/read_coverage.txt",
+#  contrast = "Status",
+#  outDir = "results/readQC_plots"
+#)
+#io
+
 ### Load libraries
 library(ggplot2)
 library(ggpubr)
@@ -78,7 +89,7 @@ load(io$annoFile, verbose = TRUE)
 
 # Read in meta data; organize sampleIDs so the order is the same
 md  <- read.table(io$metaFile, stringsAsFactors = FALSE, sep = "\t", header = TRUE)
-md  <- md[order(md[, contrast], md[, "SampleID"]) , ]
+md  <- md[order(md[, io$contrast], md[, "SampleID"]) , ]
 ord <- md$SampleID
 
 # Read in and reorder unfiltered counts table
@@ -96,11 +107,13 @@ sumCounts.df          <- as.data.frame(apply(raw, 2, sum))
 names(sumCounts.df)   <- "sumCounts"
 sumCounts.df$SampleID <- rownames(sumCounts.df)
 iv                    <- match(rownames(sumCounts.df), md$SampleID)
-sumCounts.df$contrast <- md[iv, contrast]
+sumCounts.df$contrast <- md[iv, io$contrast]
 stopifnot(rownames(sumCounts.df) == md[iv,"SampleID"])
 
-sumCounts.df$SampleID <- factor(sumCounts.df$SampleID, levels = paste(sumCounts.df[order(sumCounts.df$contrast, -sumCounts.df$sumCounts),"SampleID"])) # keeps the correct numerical order for ggplot
-sumCounts.df$contrast <- md[, contrast]
+sumCounts.df$SampleID <- factor(sumCounts.df$SampleID, 
+                                levels = paste(sumCounts.df[order(sumCounts.df$contrast, -sumCounts.df$sumCounts),"SampleID"])) # keeps the correct numerical order for ggplot
+sumCounts.df$contrast <- md[, io$contrast]
+ord <- levels(sumCounts.df$SampleID)
 
 # Barplot of read sumCounts for each sample
 totalReads.plot <- ggplot(
@@ -140,23 +153,26 @@ totalReads.boxplot <- ggplot(
           axis.line = element_line(colour = "black"))
 
 ### Plot mitochondrial fraction
-
-## check for geneID or ensembl in counts
-if( ! is.null(grep("ENSG", rownames(raw))) ){
-    print("counts are ensembl ids")
-    ids                   <- anno[grep("^MT-", anno$external_gene_name), "ensembl_gene_id"]
-    raw$ids               <- sub("\\..*$", '', rownames(raw)) # be sure ens Ids are unique
-    mtSub.mat             <- raw[raw$ids %in% ids, ]
-    raw$ids               <- NULL
-    mtSub.mat$ids         <- NULL
-    sumCounts.df$mtCounts <- colSums(mtSub.mat)
-    sumCounts.df$fracMT   <- sumCounts.df$mtCounts / sumCounts.df$sumCounts
+# Check how gene names are annotated in counts
+annoType <- c()
+if( length(grep("ENSG", rownames(raw))) == 0) {
+  print("counts are external gene ids")
+  annoType <- "external_gene_name"
+  mtSub.mat             <- raw[grep("MT-", rownames(raw), value = TRUE, ignore.case = TRUE), ]
+  sumCounts.df$mtCounts <- colSums(mtSub.mat)
+  sumCounts.df$fracMT   <- sumCounts.df$mtCounts / sumCounts.df$sumCounts
 }else{
-    print("counts are external gene ids")
-    mtSub.mat             <- raw[grep("MT-", rownames(raw), value = TRUE, ignore.case = TRUE), ]
-    sumCounts.df$mtCounts <- colSums(mtSub.mat)
-    sumCounts.df$fracMT   <- sumCounts.df$mtCounts / sumCounts.df$sumCounts
+  print("counts are ensembl ids")
+  annoType <- "ensembl_gene_id"
+  ids                   <- anno[grep("^MT-", anno$external_gene_name), "ensembl_gene_id"]
+  raw$ids               <- sub("\\..*$", '', rownames(raw)) # be sure ens Ids are unique
+  mtSub.mat             <- raw[raw$ids %in% ids, ]
+  raw$ids               <- NULL
+  mtSub.mat$ids         <- NULL
+  sumCounts.df$mtCounts <- colSums(mtSub.mat)
+  sumCounts.df$fracMT   <- sumCounts.df$mtCounts / sumCounts.df$sumCounts
 }
+annoType
 
 # Barplot of mito read fraction
 mtReads.plot <- ggplot(
@@ -195,39 +211,41 @@ mtReads.boxplot <- ggplot(
 
 
 # Save summary plot
-pdf(paste(outDir, "readSummary.pdf", sep = "/"), onefile = FALSE)
+pdf(paste(io$outDir, "readSummary.pdf", sep = "/"), onefile = FALSE)
 ggarrange(totalReads.plot, totalReads.boxplot,
           mtReads.plot, mtReads.boxplot,
           ncol = 2, nrow = 2, labels = "AUTO", common.legend = TRUE, legend = "right")
 dev.off()
 
-png(paste(outDir, "readSummary.png", sep = "/"), 1000, 1000)
+png(paste(io$outDir, "readSummary.png", sep = "/"), 1000, 1000)
 ggarrange(totalReads.plot, totalReads.boxplot,
           mtReads.plot, mtReads.boxplot,
           ncol = 2, nrow = 2, labels = "AUTO", common.legend = TRUE)
 dev.off()
 
 ### Plot biotypes
-# Check how gene names are annotated
-annoType <- c()
-if (!is.null(grep("ENSG", rownames(raw)))) {
-  annoType <- "ensembl_gene_id"
-} else {
-  annoType <- "external_gene_name"
-}
-annoType
 
 # Get gene names from counts matrix
-fD        <- as.data.frame(sub("\\..*$", "", rownames(raw))) # be sure no trailing number on ensemblId
+if( !annoType == "ensembl_gene_id") {
+  fD <- as.data.frame(rownames(raw))
+  expr <- raw
+  expr$gene <- rownames(expr)
+} else {
+  fD <- as.data.frame(sub("\\..*$", "", rownames(raw))) # be sure no trailing number on ensemblId
+  expr <- raw
+  expr$gene <- sub("\\..*$", "", rownames(expr))
+}
+#fD        <- as.data.frame(sub("\\..*$", "", rownames(raw))) 
 names(fD) <- annoType
+head(fD)
 
 # Match the gene name with its corresponding biotype
 m          <- match(fD[,1], anno[, annoType])
 fD$biotype <- anno[m, ]$gene_biotype
 
 # Make new DF of gene expression data; only include counts > 0
-expr      <- raw
-expr$gene <- sub("\\..*$", "",rownames(expr))
+# expr      <- raw
+# expr$gene <- sub("\\..*$", "", rownames(expr))
 expr      <- expr[rowSums(expr[,-ncol(expr)]) > 0, ]
 
 # Add geneID and biotype information
@@ -259,24 +277,24 @@ geneTable$Frac <- geneTable$N / sampleTable[m, ]$N
 
 # Add in contrast information
 m                  <- match(geneTable$variable, md$SampleID)
-geneTable$contrast <- md[, contrast][m]
+geneTable$contrast <- md[, io$contrast][m]
 
 # keep same order as other plots
 levels(geneTable$variable) <- levels(sumCounts.df$SampleID)
 
 # Plot biotype bar
-pdf(paste(outDir, "biotypes.pdf", sep = "/"))
+pdf(paste(io$outDir, "biotypes.pdf", sep = "/"), width=7, height=5)
 biotype.plot <- ggplot(geneTable, aes(x=variable, y=Frac, fill=biotype)) +
   geom_bar(stat="identity") +
   ylab("Fraction of each biotype") +
   xlab("Sample") +
-    scale_fill_brewer( palette = "YlGnBu" ) +
+  scale_fill_brewer( palette = "YlGnBu" ) +
   theme(axis.text.x=element_text(angle = 90, size = 5),
-        axis.text.y=element_text(size=5),
-        axis.title.y=element_text(size=8),
-        axis.title.x=element_text(size=8),
+        axis.text.y=element_text(size=10),
+        axis.title.y=element_text(size=10),
+        axis.title.x=element_text(size=10),
         legend.title=element_blank(),
-        legend.text=element_text(size=8),
+        legend.text=element_text(size=6),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
@@ -295,7 +313,7 @@ rDist.melted$variable <- relevel(rDist.melted$variable, ref = "Intergenic")
 #rDist.melted$sampleID <- factor(rDist.melted$sampleID, levels = rDist.melted$sampleID)
 
 
-pdf(paste(outDir, "mappings.pdf", sep = "/"))
+pdf(paste(io$outDir, "mappings.pdf", sep = "/"),width=7, height=5)
 mappings.plot <- ggplot(
   rDist.melted, 
   aes(x = sampleID, y = value, fill = factor(variable, levels = c("Intergenic", "Intron", "Exon")))) +
@@ -304,11 +322,11 @@ mappings.plot <- ggplot(
   xlab("Sample") +
   scale_fill_brewer( palette = "Purples" ) +
   theme(axis.text.x = element_text(angle = 90, size = 5),
-        axis.text.y = element_text(size = 5),
-        axis.title.y = element_text(size = 8),
-        axis.title.x = element_text(size = 8),
+        axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 10),
+        axis.title.x = element_text(size = 10),
         legend.title = element_blank(),
-        legend.text = element_text(size = 8),
+        legend.text = element_text(size = 6),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
