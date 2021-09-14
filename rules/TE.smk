@@ -54,3 +54,4 @@ rule TEtranscripts:
         """TEtranscripts --format BAM --stranded reverse -t {input.treat} -c {input.control} \
                          --minread 1 -i 10 --padj 0.05 --GTF {params.gtf} --TE {params.TE_gtf} \
                          --mode multi --project results/TEtranscripts/{wildcards.condition} --sortByPos"""
+
