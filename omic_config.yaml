@@ -6,10 +6,12 @@ gtf_file:
   /home/groups/CEDAR/anurpa/genomes/gencode.v27.annotation.gtf
 # Bed file for rseqc function read_distribution
 bed_file:
-  /home/exacloud/lustre1/CEDAR/roskamsh/projects/Omics-QC-pipeline/data/gencode_v27.bed
+  /home/groups/CEDAR/anurpa/genomes/gencode_v27.bed
+#  /home/exacloud/lustre1/CEDAR/roskamsh/projects/Omics-QC-pipeline/data/gencode_v27.bed
 # Pre-built star indexes for hg38
 star_index:
-  /home/groups/CEDAR/roskamsh/tools/cfRNA_star_index
+  /home/groups/CEDAR/anno/indices/star/cfRNA_star_index
+#  /home/groups/CEDAR/roskamsh/tools/cfRNA_star_index
 exon_gtf:
   /home/groups/CEDAR/anurpa/genomes/gencode.housekeeping_genes.exon.gtf
 TE_gtf:
@@ -17,7 +19,8 @@ TE_gtf:
 genome:
   /home/groups/CEDAR/anurpa/genomes/GRCh38.primary_assembly.genome.fa
 ens2geneID:
-  /home/groups/CEDAR/roskamsh/projects/cfRNA-seq-pipeline/data/biomart_ensembl_geneid.txt
+  /home/groups/CEDAR/anno/biomaRt/hg38.Ens_89_biomart_ensembl_geneid.txt
+#  /home/groups/CEDAR/roskamsh/projects/cfRNA-seq-pipeline/data/biomart_ensembl_geneid.txt
 filter_anno:
   /home/groups/CEDAR/anno/biomaRt/hg38.Ens_94.biomaRt.geneAnno.Rdata
 
@@ -31,13 +34,15 @@ conf:
   /home/groups/CEDAR/tools/FastQ_Screen_Genomes/fastq_screen.conf
 # Paths to various tools which are used in this pipeline
 star_tool:
-  /home/exacloud/lustre1/CEDAR/tools/STAR/tags/2.5.3a/bin/Linux_x86_64/STAR
+  /home/groups/CEDAR/tools/STAR/tags/2.5.3a/bin/Linux_x86_64/STAR
+#  /home/exacloud/lustre1/CEDAR/tools/STAR/tags/2.5.3a/bin/Linux_x86_64/STAR
 sickle_tool:
   /home/groups/CEDAR/tools/sickle
 picard_tool:
   /home/groups/CEDAR/tools/picard-tools-1.119/MarkDuplicates.jar
 bamstats_tool:
-  /home/groups/CEDAR/roskamsh/tools/bamstats_bin/bamstats
+  /home/groups/CEDAR/tools/bamstats_bin/bamstats
+#  /home/groups/CEDAR/roskamsh/tools/bamstats_bin/bamstats
 
 ##########################################
 # Important project-specific paths/files

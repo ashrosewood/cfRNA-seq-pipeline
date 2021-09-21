@@ -62,8 +62,8 @@ rule star:
                 --sjdbGTFfile {params.gtf} --quantMode GeneCounts \
                 --sjdbGTFtagExonParentGene gene_name \
                 --outSAMtype BAM SortedByCoordinate \
-                #--readFilesCommand zcat \
-                --twopassMode Basic
+                --twopassMode Basic \
+                --outWigType bedGraph --outWigStrand Stranded --outWigNorm RPM
                 """)
 
 rule index:
