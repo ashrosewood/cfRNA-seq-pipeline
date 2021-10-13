@@ -74,7 +74,7 @@ rule index:
     conda:
         "../envs/omic_qc_wf.yaml"
     shell:
-        """samtools index {input} {output}"""
+        """samtools index -@ 4 {input} {output}"""
 
 rule star_statistics:
     input:

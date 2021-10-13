@@ -63,7 +63,7 @@
         "J" : "index",
         "e" : "logs/index/index%j.err",
         "o" : "logs/index/index%j.out",
-        "c" : 1,
+        "c" : 4,
         "mem" : 45000
     },
     "sort" :
@@ -277,5 +277,53 @@
         "o" : "logs/run_glimma_mds/run_glimma_mds%j.out",
         "c" : 1,
         "mem" : 10000
+    },
+    "cpm_tracks" :
+    {
+        "J" : "cpm_tracks",
+        "e" : "logs/cpm_tracks/%j.err",
+        "o" : "logs/cpm_tracks/%j.out",
+        "c" : 4,
+        "mem" : 25000
+    },
+    "fwd_tracks" :
+    {
+        "J" : "fwd_tracks",
+        "e" : "logs/fwd_tracks/%j.err",
+        "o" : "logs/fwd_tracks/%j.out",
+        "c" : 4,
+        "mem": 25000
+    },
+    "rev_tracks" :
+    {
+        "J" : "rev_tracks",
+        "e" : "logs/rev_tracks/%j.err",
+        "o" : "logs/rev_tracks/%j.out",
+        "c" : 4,
+        "mem" : 25000
+    },
+    "index_TE" :
+    {
+        "J" : "index_TE",
+        "e" : "logs/index_TE/%j.err",
+        "o" : "logs/index_TE/%j.out",
+        "c" : 4,
+        "mem" : 45000
+    },
+    "uniq_fwd_tracks" :
+    {
+        "J" : "fwd_tracks",
+        "e" : "logs/uniq_fwd_tracks/%j.err",
+        "o" : "logs/uniq_fwd_tracks/%j.out",
+        "c" : 4,
+        "mem": 25000
+    },
+    "uniq_rev_tracks" :
+    {
+        "J" : "uniq_rev_tracks",
+        "e" : "logs/uniq_rev_tracks/%j.err",
+        "o" : "logs/uniq_rev_tracks/%j.out",
+        "c" : 4,
+        "mem" : 25000
     }
 }

@@ -70,7 +70,6 @@ for rule in result_dirs:
 def message(mes):
     sys.stderr.write("|--- " + mes + "\n")
 
-
 def get_deseq2_threads(wildcards=None):
     few_coeffs = False if wildcards is None else len(get_contrast(wildcards)) < 10
     return 1 if len(config["omic_meta_data"]) < 100 or few_coeffs else 6
@@ -115,9 +114,18 @@ rule all:
         expand(["results/diffexp/glimma-plots/{contrast}.ma_plot.html", "results/diffexp/glimma-plots/{contrast}.volcano_plot.html"],contrast = config["diffexp"]["contrasts"]),
         "results/diffexp/glimma-plots/{project_id}.mds_plot.html".format(project_id=project_id),
         expand("results/readQC_plots/{plot}.pdf", plot = plotNames),
+        expand("samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam.bai", sample = SAMPLES),
+        expand("samples/bigwig_TE/{sample}_cpm.bw", sample = SAMPLES),
+        expand("samples/bigwig_TE/{sample}_fwd.bw", sample = SAMPLES),
+        expand("samples/bigwig_TE/{sample}_rev.bw", sample = SAMPLES),
+	expand("samples/star/{sample}_bam/Aligned.sortedByCoord.out.bam.bai", sample = SAMPLES),
+        expand("samples/star/{sample}_bam/{sample}_fwd.bw", sample = SAMPLES),
+        expand("samples/star/{sample}_bam/{sample}_rev.bw", sample = SAMPLES),
+	
 	
 
 include: "rules/align_rmdp.smk"
 include: "rules/omic_qc.smk"
 include: "rules/TE.smk"
 include: "rules/deseq.smk"
+include: "rules/deeptools.smk"
