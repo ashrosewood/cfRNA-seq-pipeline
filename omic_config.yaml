@@ -15,7 +15,8 @@ star_index:
 exon_gtf:
   /home/groups/CEDAR/anurpa/genomes/gencode.housekeeping_genes.exon.gtf
 TE_gtf:
-  /home/groups/CEDAR/anno/gtf/hg38_rmsk_TE.gtf
+  /home/groups/CEDAR/anno/gtf/hg38_rmsk_TE_noBlackList.gtf
+#  /home/groups/CEDAR/anno/gtf/hg38_rmsk_TE.gtf
 genome:
   /home/groups/CEDAR/anurpa/genomes/GRCh38.primary_assembly.genome.fa
 ens2geneID:

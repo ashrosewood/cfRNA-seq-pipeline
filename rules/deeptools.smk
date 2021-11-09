@@ -8,18 +8,18 @@ rule index_TE:
     shell:
         """samtools index -@ 4 {input} {output}"""
 
-rule cpm_tracks:
-    input:
-        bam = "samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam",
-        idx = "samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam.bai"
-    output:
-        wig = "samples/bigwig_TE/{sample}_cpm.bw"
-    params:
-        exclude = config["blackList"]
-    conda:
-        "../envs/deeptools.yaml"
-    shell:
-        "bamCoverage -p 4 --normalizeUsing CPM -bs 1 -b {input.bam} -o {output.wig}"
+#rule cpm_tracks:
+#    input:
+#        bam = "samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam",
+#        idx = "samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam.bai"
+#    output:
+#        wig = "samples/bigwig_TE/{sample}_cpm.bw"
+#    params:
+#        exclude = config["blackList"]
+#    conda:
+#        "../envs/deeptools.yaml"
+#    shell:
+#        "bamCoverage -p 4 --normalizeUsing CPM -bs 1 -b {input.bam} -o {output.wig}"
 
 rule fwd_tracks:
     input:

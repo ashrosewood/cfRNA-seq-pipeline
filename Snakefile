@@ -115,7 +115,7 @@ rule all:
         "results/diffexp/glimma-plots/{project_id}.mds_plot.html".format(project_id=project_id),
         expand("results/readQC_plots/{plot}.pdf", plot = plotNames),
         expand("samples/star_TE/{sample}/Aligned.sortedByCoord.out.bam.bai", sample = SAMPLES),
-        expand("samples/bigwig_TE/{sample}_cpm.bw", sample = SAMPLES),
+#        expand("samples/bigwig_TE/{sample}_cpm.bw", sample = SAMPLES),
         expand("samples/bigwig_TE/{sample}_fwd.bw", sample = SAMPLES),
         expand("samples/bigwig_TE/{sample}_rev.bw", sample = SAMPLES),
 	expand("samples/star/{sample}_bam/Aligned.sortedByCoord.out.bam.bai", sample = SAMPLES),
